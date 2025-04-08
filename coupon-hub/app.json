@@ -1,0 +1,30 @@
+{
+  "expo": {
+    "name": "SmartCouponOrganizer",
+    "slug": "smartcouponorganizer",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "scheme": "smartcouponorganizer",
+    "userInterfaceStyle": "automatic",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "bundleIdentifier": "com.yourname.smartcouponorganizer",
+      "buildNumber": "1.0.0"
+    },
+    "android": {
+      "package": "com.yourname.smartcouponorganizer",
+      "versionCode": 1
+    },
+    "extra": {
+      "eas": {
+        "projectId": "your-project-id"
+      }
+    }
+  }
+}
