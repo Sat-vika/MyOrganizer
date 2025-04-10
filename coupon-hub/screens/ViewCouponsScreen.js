@@ -1,222 +1,4 @@
-/*
-import React, { useContext, useState } from 'react';
-import {
-  View,
-  Text,
-  FlatList,
-  StyleSheet,
-  Alert,
-} from 'react-native';
-import { CouponContext } from '../context/CouponContext';
-import { useTheme } from '../context/ThemeContext';
-import CouponCard from '../components/CouponCard';
-import SearchBar from '../components/SearchBar';
-import ThemeToggleButton from '../components/ThemeToggleButton';
 
-const ViewCouponsScreen = ({ navigation }) => {
-  const { coupons, deleteCoupon } = useContext(CouponContext);
-  const { dark, theme } = useTheme();
-  const [searchTerm, setSearchTerm] = useState('');
-
-  const handleDelete = (id) => {
-    Alert.alert('Delete Coupon', 'Are you sure you want to delete this coupon?', [
-      { text: 'Cancel', style: 'cancel' },
-      { text: 'Delete', onPress: () => deleteCoupon(id), style: 'destructive' },
-    ]);
-  };
-
-  const handleEdit = (coupon) => {
-    navigation.navigate('EditCoupon', { coupon });
-  };
-
-  const filteredCoupons = coupons.filter((coupon) => {
-    if (!coupon) return false;
-    const app = coupon.app || '';
-    const code = coupon.code || '';
-    const description = coupon.description || '';
-    return (
-      app.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      code.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      description.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-  });
-
-  const groupedCoupons = filteredCoupons.reduce((groups, coupon) => {
-    if (!coupon) return groups;
-    const appName = coupon.app || 'Other';
-    if (!groups[appName]) groups[appName] = [];
-    groups[appName].push(coupon);
-    return groups;
-  }, {});
-
-  const renderGroupedCoupons = () => {
-    return Object.entries(groupedCoupons).map(([app, appCoupons]) => (
-      <View key={app} style={styles.groupContainer}>
-        <Text style={[styles.groupTitle, { color: theme.colors.primary }]}>{app}</Text>
-        {appCoupons.map((coupon) =>
-          coupon ? (
-            <CouponCard
-              key={coupon.id}
-              item={coupon}
-              onDelete={handleDelete}
-              onEdit={handleEdit}
-            />
-          ) : null
-        )}
-      </View>
-    ));
-  };
-
-  return (
-    <FlatList
-      data={[{ key: 'grouped' }]}
-      renderItem={renderGroupedCoupons}
-      ListHeaderComponent={
-        <View>
-          <ThemeToggleButton />
-          <SearchBar searchTerm={searchTerm} onChange={setSearchTerm} />
-          <Text
-            style={[
-              styles.header,
-              {
-                color: dark ? '#fff' : '#000',
-                backgroundColor: dark ? '#000' : '#fff',
-              },
-            ]}
-          >
-            Your Coupons
-          </Text>
-        </View>
-      }
-      contentContainerStyle={{ paddingBottom: 40 }}
-    />
-  );
-};
-
-const styles = StyleSheet.create({
-  header: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    padding: 16,
-  },
-  groupContainer: {
-    marginBottom: 20,
-    paddingHorizontal: 16,
-  },
-  groupTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 10,
-  },
-});
-
-
-export default ViewCouponsScreen;
-*//*
-import React, { useContext, useState } from 'react';
-import { View, Text, FlatList, StyleSheet, Switch } from 'react-native';
-import { CouponContext } from '../context/CouponContext';
-import { useTheme } from '../context/ThemeContext';
-import CouponCard from '../components/CouponCard';
-import SearchBar from '../components/SearchBar';
-import ThemeToggleButton from '../components/ThemeToggleButton';
-
-const ViewCouponsScreen = () => {
-  const { coupons, deleteCoupon } = useContext(CouponContext);
-  const { dark } = useTheme();
-  const [searchTerm, setSearchTerm] = useState('');
-  const [showExpired, setShowExpired] = useState(false);
-
-  const now = new Date();
-
-  const handleDelete = (id) => deleteCoupon(id);
-
-  const filteredCoupons = coupons.filter((coupon) => {
-    if (!coupon) return false;
-    const isExpired = new Date(coupon.expiryDate) < now;
-    if (!showExpired && isExpired) return false;
-
-    const app = coupon.app || '';
-    const code = coupon.code || '';
-    const description = coupon.description || '';
-    return (
-      app.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      code.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      description.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-  });
-
-  const groupedCoupons = filteredCoupons.reduce((groups, coupon) => {
-    const appName = coupon.app || 'Other';
-    if (!groups[appName]) groups[appName] = [];
-    groups[appName].push(coupon);
-    return groups;
-  }, {});
-
-  const renderGroupedCoupons = () => {
-    return Object.entries(groupedCoupons).map(([app, appCoupons]) => (
-      <View key={app} style={styles.groupContainer}>
-        <Text style={[styles.groupTitle, { color: dark ? '#4dd0e1' : '#4a90e2' }]}>{app}</Text>
-        {appCoupons.map((coupon) => (
-          <CouponCard key={coupon.id} item={coupon} onDelete={handleDelete} />
-        ))}
-      </View>
-    ));
-  };
-
-  return (
-    <FlatList
-      data={[{ key: 'grouped' }]}
-      renderItem={renderGroupedCoupons}
-      ListHeaderComponent={
-        <View>
-          <ThemeToggleButton />
-          <SearchBar searchTerm={searchTerm} onChange={setSearchTerm} />
-          <View style={styles.toggleRow}>
-            <Text style={{ color: dark ? '#fff' : '#000' }}>Show Expired Coupons</Text>
-            <Switch value={showExpired} onValueChange={setShowExpired} />
-          </View>
-          <Text
-            style={[
-              styles.header,
-              { color: dark ? '#fff' : '#000', backgroundColor: dark ? '#000' : '#fff' },
-            ]}
-          >
-            Your Coupons
-          </Text>
-        </View>
-      }
-      contentContainerStyle={{ paddingBottom: 40 }}
-    />
-  );
-};
-
-const styles = StyleSheet.create({
-  header: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    padding: 16,
-  },
-  groupContainer: {
-    marginBottom: 20,
-    paddingHorizontal: 16,
-  },
-  groupTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 10,
-  },
-  toggleRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingTop: 10,
-  },
-});
-
-export default ViewCouponsScreen;
-*/
 import React, { useContext, useState } from 'react';
 import { View, Text, FlatList, StyleSheet, Switch } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
@@ -225,18 +7,28 @@ import { useTheme } from '../context/ThemeContext';
 import CouponCard from '../components/CouponCard';
 import SearchBar from '../components/SearchBar';
 import ThemeToggleButton from '../components/ThemeToggleButton';
+import { useNavigation } from '@react-navigation/native';
+//import DateTimePicker from '@react-native-community/datetimepicker';
+
 
 const ViewCouponsScreen = () => {
   const { coupons, deleteCoupon } = useContext(CouponContext);
   const { dark } = useTheme();
   const [searchTerm, setSearchTerm] = useState('');
   const [showExpired, setShowExpired] = useState(false);
-  const [sortOption, setSortOption] = useState('expiryAsc'); // default sorting
+  const [sortOption, setSortOption] = useState('expiryAsc');
 
   const now = new Date();
 
   const handleDelete = (id) => deleteCoupon(id);
 
+ 
+  const navigation = useNavigation();
+
+  const handleEdit = (coupon) => {
+    navigation.navigate('EditCoupon', { coupon });
+  };
+  
   const filteredCoupons = coupons.filter((coupon) => {
     if (!coupon) return false;
 
@@ -247,7 +39,6 @@ const ViewCouponsScreen = () => {
     return text.includes(searchTerm.toLowerCase());
   });
 
-  // Sort logic
   const sortedCoupons = [...filteredCoupons].sort((a, b) => {
     if (sortOption === 'expiryAsc') {
       return new Date(a.expiryDate) - new Date(b.expiryDate);
@@ -274,7 +65,7 @@ const ViewCouponsScreen = () => {
           const isExpired = new Date(coupon.expiryDate) < now;
           return (
             <View key={coupon.id}>
-              <CouponCard item={coupon} onDelete={handleDelete} />
+              <CouponCard item={coupon} onDelete={handleDelete} onEdit={handleEdit} />
               {isExpired && showExpired && (
                 <Text style={[styles.expiredLabel, { color: dark ? '#f88' : '#b00' }]}>
                   ⚠️ Expired

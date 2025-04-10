@@ -1,4 +1,6 @@
 import { registerRootComponent } from 'expo';
+import DateTimePicker from '@react-native-community/datetimepicker';
+
 
 import App from './App';
 
